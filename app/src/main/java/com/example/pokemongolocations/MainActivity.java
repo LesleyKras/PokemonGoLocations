@@ -20,13 +20,13 @@ public class MainActivity extends AppCompatActivity {
         foundPokemonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openLocationActivity();
+                openFormActivity();
             }
         });
     }
 
-    private void openLocationActivity() {
-        Intent intent = new Intent(this, LocationActivity.class);
+    private void openFormActivity() {
+        Intent intent = new Intent(this, FormActivity.class);
         startActivity(intent);
     }
 
