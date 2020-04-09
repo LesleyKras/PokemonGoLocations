@@ -3,6 +3,7 @@ package com.example.pokemongolocations;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +15,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
@@ -36,6 +36,7 @@ public class FormActivity extends AppCompatActivity {
         submitButton = (Button) findViewById(R.id.submit_button);
 
         textView = findViewById(R.id.apitest);
+        textView.setMovementMethod(new ScrollingMovementMethod());
 
         // RequestQueue For Handle Network Request
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -70,12 +71,11 @@ public class FormActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     textView.setText("Response : " + response.toString());
-                    Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                    textView.setText("Response : " + error.toString());
                 }
             });
             requestQueue.add(jsonObjectRequest);
