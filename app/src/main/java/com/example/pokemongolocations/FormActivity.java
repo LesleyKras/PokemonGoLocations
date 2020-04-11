@@ -2,8 +2,8 @@ package com.example.pokemongolocations;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,14 +44,20 @@ public class FormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
+        // Set title for activity
+        setTitle("Register your pokémon");
+
+        // Put elements from layout into variables
         backButton = (Button) findViewById(R.id.back_button);
         submitButton = (Button) findViewById(R.id.submit_button);
         pokemonsSpinner = (Spinner) findViewById(R.id.pokemons_spinner);
         pokemonImageView = (ImageView) findViewById(R.id.pokemon_image_view);
         pokemonName = (TextView) findViewById(R.id.pokemon_name);
 
+        // Load pokemon data from API into the spinner; limit=964 for all pokémon
         getPokemonsForSpinner("https://pokeapi.co/api/v2/pokemon?limit=151");
 
+        // Set EventListener for back button to return to previous activity.
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +65,7 @@ public class FormActivity extends AppCompatActivity {
             }
         });
 
+        // Set EventListener for submit button to save data on device.
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,6 +73,7 @@ public class FormActivity extends AppCompatActivity {
             }
         });
 
+        // Event listener if Item from spinner gets selected
         pokemonsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -74,7 +82,6 @@ public class FormActivity extends AppCompatActivity {
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-                // DO Nothing here
             }
         });
     }
@@ -131,6 +138,7 @@ public class FormActivity extends AppCompatActivity {
                         JSONObject object = response;
                         String pokemonSprite = object.getJSONObject("sprites").getString("front_default");
                         String name = object.getString("name");
+                        name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 
                         pokemonName.setText(name);
                         Picasso.get().load(pokemonSprite).centerInside().resize(900,900).into(pokemonImageView);
@@ -150,6 +158,7 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    // Back functionality for back button
     private void back() {
         this.finish();
     }
