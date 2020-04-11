@@ -1,6 +1,7 @@
 package com.example.pokemongolocations;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -20,6 +21,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -29,13 +38,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class FormActivity extends AppCompatActivity {
+public class FormActivity extends AppCompatActivity implements OnMapReadyCallback {
     private Button backButton;
     private Button submitButton;
     private TextView pokemonName;
     private ImageView pokemonImageView;
     private Spinner pokemonsSpinner;
-
+    private Integer mapZoom;
     private ArrayList<String> pokemons =new ArrayList<>();
 
 
@@ -53,6 +62,9 @@ public class FormActivity extends AppCompatActivity {
         pokemonsSpinner = (Spinner) findViewById(R.id.pokemons_spinner);
         pokemonImageView = (ImageView) findViewById(R.id.pokemon_image_view);
         pokemonName = (TextView) findViewById(R.id.pokemon_name);
+
+        //Google Maps settings
+        mapZoom = 17;
 
         // Load pokemon data from API into the spinner; limit=964 for all pokémon
         getPokemonsForSpinner("https://pokeapi.co/api/v2/pokemon?limit=151");
@@ -84,6 +96,10 @@ public class FormActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
     }
 
     private void getPokemonsForSpinner(String url){
@@ -161,5 +177,17 @@ public class FormActivity extends AppCompatActivity {
     // Back functionality for back button
     private void back() {
         this.finish();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LocationService locationService = new LocationService();
+        LatLng location = locationService.getLatLng();
+
+        googleMap.addMarker(new MarkerOptions()
+                .position(location)
+                .title("Marker"));
+        CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(location, mapZoom);
+        googleMap.animateCamera(camPosition);
     }
 }

@@ -1,19 +1,43 @@
 package com.example.pokemongolocations;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.google.android.gms.maps.model.LatLng;
 
-import android.os.Bundle;
+public class LocationService {
+    private double longitude;
+    private double latitude;
 
-
-public class LocationService extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_form);
+    LocationService(){
+        getLocation();
     }
 
-    private void back() {
-        this.finish();
+    private void getLocation() {
+        setLongitude(4.9913655);
+        setLatitude(51.8387731);
     }
+
+    public LatLng getLatLng() {
+        return new LatLng(getLatitude(),getLongitude());
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+
+
+
+
+
 }
