@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:fragment="com.example.pokemongolocations.SettingsActivity$StylingFragment"
+        app:icon="@drawable/messages"
+        app:key="styling_header"
+        app:title="@string/styling_header" />
+
+    <Preference
+        app:fragment="com.example.pokemongolocations.SettingsActivity$GoogleMapsFragment"
+        app:icon="@drawable/sync"
+        app:key="google_maps_header"
+        app:title="@string/googleMaps_header" />
+
+</PreferenceScreen>

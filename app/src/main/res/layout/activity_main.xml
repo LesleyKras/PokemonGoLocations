@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#03A9F4"
     tools:context=".MainActivity">
 
     <ImageView
@@ -40,7 +40,7 @@
         android:layout_height="32dp"
         android:gravity="center"
         android:text="LOCATION VAULT!"
-        android:textColor="#3F51B5"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,7 +52,6 @@
         android:id="@+id/I_found_pokemon_button"
         android:layout_width="368dp"
         android:layout_height="140dp"
-        android:background="#3F51B5"
         android:text="I found a cool pokémon!"
         android:textColor="#FFFFFF"
         android:textSize="24sp"

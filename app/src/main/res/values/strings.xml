@@ -4,4 +4,22 @@
     <string name="submit_button">Submit</string>
     <string name="select_your_pokemon">Select Your Pokémon:</string>
     <string name="select_your_location">Select Your Location:</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Preference Titles -->
+    <string name="styling_header">Appearance</string>
+    <string name="googleMaps_header">Google Maps</string>
+
+    <!-- Messages Preferences -->
+    <string name="backgroundColor_title">Background color</string>
+    <string name="backgroundColor_summary">Change the color for the background here</string>
+
+    <string name="buttonColor_title">Button color</string>
+    <string name="buttonColor_summary">Change the color for the buttons here</string>
+
+    <string name="menuColor_title">Menu color</string>
+    <string name="menuColor_summary">Change the color for the menu here</string>
+
+    <!-- Sync Preferences -->
+    <string name="google_maps_zoom_title">Zoom level</string>
 </resources>

@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+        app:defaultValue="@color/colorDefault"
+        app:key="menu_color"
+        app:summary="@string/menuColor_summary"
+        app:title="@string/menuColor_title"/>
+
+    <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+        app:defaultValue="@color/colorDefault"
+        app:key="background_color"
+        app:summary="@string/backgroundColor_summary"
+        app:title="@string/backgroundColor_title"/>
+
+    <com.jaredrummler.android.colorpicker.ColorPreferenceCompat
+        app:defaultValue="@color/colorDefault"
+        app:key="button_color"
+        app:summary="@string/buttonColor_summary"
+        app:title="@string/buttonColor_title"/>
+
+</PreferenceScreen>

@@ -25,10 +25,10 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -66,7 +66,7 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Google Maps settings
         mapZoom = 17;
 
-        // Load pokemon data from API into the spinner; limit=964 for all pokémon
+        // Load pokemon data from API into the spinner; limit=964 for all pokémons
         getPokemonsForSpinner("https://pokeapi.co/api/v2/pokemon?limit=151");
 
         // Set EventListener for back button to return to previous activity.
@@ -117,8 +117,11 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                                 //Retrieve data from the API JSONArray
                                 JSONObject pokemonObject = pokemonArray.getJSONObject(i);
+                                Integer pokemonId = i + 1;
+                                String pokemonIDString = "#" + pokemonId + " | ";
                                 String pokemonName = pokemonObject.getString("name");
                                 pokemonName = pokemonName.substring(0, 1).toUpperCase() + pokemonName.substring(1).toLowerCase();
+                                pokemonName = pokemonIDString + pokemonName;
 
                                 //put pokemon name in array for use of Spinner
                                 pokemons.add(pokemonName);
@@ -174,11 +177,6 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    // Back functionality for back button
-    private void back() {
-        this.finish();
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LocationService locationService = new LocationService();
@@ -189,5 +187,10 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .title("Marker"));
         CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(location, mapZoom);
         googleMap.animateCamera(camPosition);
+    }
+
+    // Back functionality for back button
+    private void back() {
+        this.finish();
     }
 }
