@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDefault"
     app:layout_constraintCircleRadius="100dp">
 
     <Button
@@ -12,6 +11,7 @@
         android:layout_width="122dp"
         android:layout_height="59dp"
         android:text="@string/back_button"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.049"
@@ -24,14 +24,13 @@
         android:layout_width="123dp"
         android:layout_height="59dp"
         android:text="@string/submit_button"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.967"
-        tools:layout_editor_absoluteX="272dp"
-        tools:layout_editor_absoluteY="648dp" />
+        app:layout_constraintVertical_bias="0.967" />
 
     <Spinner
         android:id="@+id/pokemons_spinner"
@@ -52,6 +51,7 @@
         android:fontFamily="sans-serif-black"
         android:gravity="center_horizontal|center_vertical"
         android:text="TextView"
+        android:textColor="@color/colorWhite"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -91,6 +91,7 @@
         android:layout_height="24dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/select_your_pokemon"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.387"
@@ -116,6 +117,7 @@
         android:layout_height="24dp"
         android:fontFamily="sans-serif-black"
         android:text="@string/select_your_location"
+        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.612"

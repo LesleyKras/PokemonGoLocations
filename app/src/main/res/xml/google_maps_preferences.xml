@@ -1,7 +1,7 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
-        app:key="sync"
+    <EditTextPreference
+        app:key="mapZoom"
         app:title="@string/google_maps_zoom_title" />
 
 

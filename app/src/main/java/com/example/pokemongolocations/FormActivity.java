@@ -2,7 +2,11 @@ package com.example.pokemongolocations;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.preference.PreferenceManager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +33,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -39,13 +44,17 @@ import java.util.ArrayList;
 
 
 public class FormActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private Button backButton;
-    private Button submitButton;
     private TextView pokemonName;
     private ImageView pokemonImageView;
     private Spinner pokemonsSpinner;
     private Integer mapZoom;
     private ArrayList<String> pokemons =new ArrayList<>();
+    private LatLng location;
+    private String pokemonNameForSubmit;
+    private Integer pokemonId;
+    private String pokemonImageUrl;
+    private JSONArray pokemonDataArray;
+
 
 
     @Override
@@ -53,18 +62,44 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Integer menuColor = sharedPreferences.getInt("menu_color", Color.parseColor("#ffffff"));
+        Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
+        Integer buttonColor = sharedPreferences.getInt("button_color", Color.parseColor("#ffffff"));
+
         // Set title for activity
         setTitle("Register your pokémon");
 
         // Put elements from layout into variables
-        backButton = (Button) findViewById(R.id.back_button);
-        submitButton = (Button) findViewById(R.id.submit_button);
+        Button backButton = (Button) findViewById(R.id.back_button);
+        Button submitButton = (Button) findViewById(R.id.submit_button);
         pokemonsSpinner = (Spinner) findViewById(R.id.pokemons_spinner);
         pokemonImageView = (ImageView) findViewById(R.id.pokemon_image_view);
         pokemonName = (TextView) findViewById(R.id.pokemon_name);
 
+        SharedPreferences pref = getSharedPreferences("pokemons", MODE_PRIVATE);
+        String json_array = pref.getString("pokemons", null);
+        if(json_array != null){
+            try {
+                pokemonDataArray = new JSONArray(json_array);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }else{
+            pokemonDataArray = new JSONArray();
+        }
+
+        //Set colors from settings
+        backButton.setBackgroundColor(buttonColor);
+        submitButton.setBackgroundColor(buttonColor);
+        pokemonImageView.setBackgroundColor(backgroundColor);
+
+        //Apply background color settings to activity
+        View root = backButton.getRootView();
+        root.setBackgroundColor(backgroundColor);
+
         //Google Maps settings
-        mapZoom = 17;
+        mapZoom = Integer.parseInt(sharedPreferences.getString("mapZoom", "17"));
 
         // Load pokemon data from API into the spinner; limit=964 for all pokémons
         getPokemonsForSpinner("https://pokeapi.co/api/v2/pokemon?limit=151");
@@ -81,7 +116,11 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Hier komt de actie om data op te slaan", Toast.LENGTH_SHORT).show();
+                try {
+                    submitPokemonData();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -89,8 +128,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         pokemonsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                int id = pokemonsSpinner.getSelectedItemPosition() + 1;
-                getPokemonDataById(id);
+                pokemonId = pokemonsSpinner.getSelectedItemPosition() + 1;
+                getPokemonDataById(pokemonId);
             }
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
@@ -160,6 +199,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                         name = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
 
                         pokemonName.setText(name);
+                        pokemonNameForSubmit = name;
+                        pokemonImageUrl = pokemonSprite;
                         Picasso.get().load(pokemonSprite).centerInside().resize(900,900).into(pokemonImageView);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -177,10 +218,32 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private void submitPokemonData() throws JSONException {
+        JSONObject pokemonData = new JSONObject();
+        try{
+            pokemonData.put("id", pokemonId);
+            pokemonData.put("name", pokemonNameForSubmit );
+            pokemonData.put("image_url", pokemonImageUrl);
+            pokemonData.put("location", location);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        pokemonDataArray.put(pokemonData);
+
+        String pokemonsDataString = pokemonDataArray.toString();
+
+        getSharedPreferences("pokemons", MODE_PRIVATE)
+                .edit()
+                .putString("pokemons", pokemonsDataString)
+                .apply();
+        Toast.makeText(getApplicationContext(), "Pokemon and location successfully saved!", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LocationService locationService = new LocationService();
-        LatLng location = locationService.getLatLng();
+        location = locationService.getLatLng();
 
         googleMap.addMarker(new MarkerOptions()
                 .position(location)
