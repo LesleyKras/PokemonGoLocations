@@ -15,6 +15,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     private Button foundPokemonButton;
+    private Button listViewButton;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -22,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Loading settings configuration for styling settings
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Integer menuColor = sharedPreferences.getInt("menu_color", Color.parseColor("#ffffff"));
         Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
@@ -31,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         foundPokemonButton = (Button) findViewById(R.id.I_found_pokemon_button);
         foundPokemonButton.setBackgroundColor(buttonColor);
 
+        listViewButton = (Button) findViewById(R.id.list_view_button);
+        listViewButton.setBackgroundColor(buttonColor);
+
+
         //Apply background color settings to activity
         View root = foundPokemonButton.getRootView();
         root.setBackgroundColor(backgroundColor);
@@ -39,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openFormActivity();
+            }
+        });
+
+        listViewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openListViewActivity();
             }
         });
     }
@@ -65,6 +78,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void openFormActivity() {
         Intent intent = new Intent(this, FormActivity.class);
+        startActivity(intent);
+    }
+
+    private void openListViewActivity() {
+        Intent intent = new Intent(this, ListActivity.class);
         startActivity(intent);
     }
 

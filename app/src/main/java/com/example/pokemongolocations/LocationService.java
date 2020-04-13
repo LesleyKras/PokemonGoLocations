@@ -11,6 +11,7 @@ public class LocationService {
     }
 
     private void getLocation() {
+
         setLongitude(4.9913655);
         setLatitude(51.8387731);
     }

@@ -1,5 +1,6 @@
 package com.example.pokemongolocations;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -67,11 +69,12 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
         Integer buttonColor = sharedPreferences.getInt("button_color", Color.parseColor("#ffffff"));
 
-        // Set title for activity
-        setTitle("Register your pokémon");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Register your pokémon!");
+        actionBar.setDisplayShowTitleEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Put elements from layout into variables
-        Button backButton = (Button) findViewById(R.id.back_button);
         Button submitButton = (Button) findViewById(R.id.submit_button);
         pokemonsSpinner = (Spinner) findViewById(R.id.pokemons_spinner);
         pokemonImageView = (ImageView) findViewById(R.id.pokemon_image_view);
@@ -90,12 +93,11 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //Set colors from settings
-        backButton.setBackgroundColor(buttonColor);
         submitButton.setBackgroundColor(buttonColor);
         pokemonImageView.setBackgroundColor(backgroundColor);
 
         //Apply background color settings to activity
-        View root = backButton.getRootView();
+        View root = submitButton.getRootView();
         root.setBackgroundColor(backgroundColor);
 
         //Google Maps settings
@@ -103,14 +105,6 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Load pokemon data from API into the spinner; limit=964 for all pokémons
         getPokemonsForSpinner("https://pokeapi.co/api/v2/pokemon?limit=151");
-
-        // Set EventListener for back button to return to previous activity.
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                back();
-            }
-        });
 
         // Set EventListener for submit button to save data on device.
         submitButton.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +133,18 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void getPokemonsForSpinner(String url){
@@ -224,7 +230,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
             pokemonData.put("id", pokemonId);
             pokemonData.put("name", pokemonNameForSubmit );
             pokemonData.put("image_url", pokemonImageUrl);
-            pokemonData.put("location", location);
+            pokemonData.put("longitude", location.longitude);
+            pokemonData.put("latitude", location.latitude);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -250,10 +257,5 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .title("Marker"));
         CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(location, mapZoom);
         googleMap.animateCamera(camPosition);
-    }
-
-    // Back functionality for back button
-    private void back() {
-        this.finish();
     }
 }

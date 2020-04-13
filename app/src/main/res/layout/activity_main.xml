@@ -50,16 +50,30 @@
 
     <Button
         android:id="@+id/I_found_pokemon_button"
-        android:layout_width="368dp"
-        android:layout_height="140dp"
+        android:layout_width="242dp"
+        android:layout_height="77dp"
         android:text="I found a cool pokémon!"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.949" />
+        app:layout_constraintVertical_bias="0.821" />
+
+    <Button
+        android:id="@+id/list_view_button"
+        android:layout_width="246dp"
+        android:layout_height="78dp"
+        android:text="SHOW MY POKÉMON"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.952" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

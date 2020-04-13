@@ -7,30 +7,16 @@
     app:layout_constraintCircleRadius="100dp">
 
     <Button
-        android:id="@+id/back_button"
-        android:layout_width="122dp"
-        android:layout_height="59dp"
-        android:text="@string/back_button"
-        android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.049"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.967" />
-
-    <Button
         android:id="@+id/submit_button"
-        android:layout_width="123dp"
-        android:layout_height="59dp"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
         android:text="@string/submit_button"
         android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.967" />
+        app:layout_constraintVertical_bias="0.933" />
 
     <Spinner
         android:id="@+id/pokemons_spinner"
