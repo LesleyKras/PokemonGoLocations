@@ -1,4 +1,6 @@
 package com.example.pokemongolocations;
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -16,10 +19,13 @@ import java.util.ArrayList;
 
 public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder>{
     private ArrayList<PokemonData> listdata;
+    private Context context;
+
 
     // RecyclerView recyclerView;
-    public MyListAdapter(ArrayList<PokemonData> listdata) {
+    public MyListAdapter(Context applicationContext, ArrayList<PokemonData> listdata) {
         this.listdata = listdata;
+        this.context = applicationContext;
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -34,10 +40,12 @@ public class MyListAdapter extends RecyclerView.Adapter<MyListAdapter.ViewHolder
         final PokemonData pokemonData = listdata.get(position);
         holder.textView.setText(listdata.get(position).getName());
         Picasso.get().load(listdata.get(position).getImageUrl()).centerInside().resize(900,900).into(holder.imageView);
+
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(),"LOCATION: Longitude:"+pokemonData.getLongitude()+" latitude: "+pokemonData.getLatitude(),Toast.LENGTH_SHORT).show();
+                LatLng location = new LatLng(pokemonData.getLatitude(), pokemonData.getLongitude());
+                ((ListActivity) context).goToPokemonLocation(location, pokemonData.getName());
             }
         });
     }

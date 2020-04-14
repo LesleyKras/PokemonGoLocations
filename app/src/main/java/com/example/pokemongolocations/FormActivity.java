@@ -6,10 +6,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,15 +30,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.google.gson.Gson;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -46,18 +55,32 @@ import java.util.ArrayList;
 
 
 public class FormActivity extends AppCompatActivity implements OnMapReadyCallback {
-    private TextView pokemonName;
+    // Activity Elements
     private ImageView pokemonImageView;
+    private TextView pokemonName;
     private Spinner pokemonsSpinner;
-    private Integer mapZoom;
-    private ArrayList<String> pokemons =new ArrayList<>();
-    private LatLng location;
-    private String pokemonNameForSubmit;
+    private MapFragment mapFragment;
+
+    // Pokemon Data
     private Integer pokemonId;
+    private String pokemonNameForSubmit;
     private String pokemonImageUrl;
+
+    // Settings
+    private Integer mapZoom;
+    private Location lastKnownLocation;
+
+    //Location
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
+    private Marker marker;
+
+
+    //Other
     private JSONArray pokemonDataArray;
-
-
+    private ArrayList<String> pokemons =new ArrayList<>();
+    private GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,20 +102,43 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         pokemonsSpinner = (Spinner) findViewById(R.id.pokemons_spinner);
         pokemonImageView = (ImageView) findViewById(R.id.pokemon_image_view);
         pokemonName = (TextView) findViewById(R.id.pokemon_name);
+        mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map);
+        locationRequest = createLocationRequest();
 
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+
+                    if(marker != null){
+                        marker.remove();
+                    }
+                    updateLocation();
+                }
+            }
+        };
+
+        // Load currently saved pokemons to extend JSONArray
         SharedPreferences pref = getSharedPreferences("pokemons", MODE_PRIVATE);
         String json_array = pref.getString("pokemons", null);
-        if(json_array != null){
+
+        // Check if pokemon data is available
+        if (json_array != null) {
             try {
                 pokemonDataArray = new JSONArray(json_array);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }else{
+            // Else create a new empty array
+        } else {
             pokemonDataArray = new JSONArray();
         }
 
-        //Set colors from settings
+        //Set button colors from settings
         submitButton.setBackgroundColor(buttonColor);
         pokemonImageView.setBackgroundColor(backgroundColor);
 
@@ -125,14 +171,16 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                 pokemonId = pokemonsSpinner.getSelectedItemPosition() + 1;
                 getPokemonDataById(pokemonId);
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        // GPS instance of fusedLocationClient
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        startLocationUpdates();
+        getLastLocation();
     }
 
     @Override
@@ -230,8 +278,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
             pokemonData.put("id", pokemonId);
             pokemonData.put("name", pokemonNameForSubmit );
             pokemonData.put("image_url", pokemonImageUrl);
-            pokemonData.put("longitude", location.longitude);
-            pokemonData.put("latitude", location.latitude);
+            pokemonData.put("longitude", lastKnownLocation.getLongitude());
+            pokemonData.put("latitude", lastKnownLocation.getLatitude());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -247,15 +295,68 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         finish();
     }
 
+    public void getLastLocation(){
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            lastKnownLocation = location;
+                            loadMap();
+                        }
+                    }
+                });
+    }
+
+    public void updateLocation(){
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            lastKnownLocation = location;
+                            CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), mapZoom);
+                            googleMap.animateCamera(camPosition);
+                            marker = googleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                    .title("Current Location"));
+                        }
+                    }
+                });
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LocationService locationService = new LocationService();
-        location = locationService.getLatLng();
-
-        googleMap.addMarker(new MarkerOptions()
-                .position(location)
-                .title("Marker"));
-        CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(location, mapZoom);
+        this.googleMap = googleMap;
+        CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), mapZoom);
         googleMap.animateCamera(camPosition);
+    }
+
+    public void loadMap(){
+        mapFragment.getMapAsync(this);
+    }
+
+    protected LocationRequest createLocationRequest() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(5000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return locationRequest;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationUpdates();
+    }
+
+    private void startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
     }
 }
