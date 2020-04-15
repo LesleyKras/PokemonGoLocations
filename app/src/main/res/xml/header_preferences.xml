@@ -2,14 +2,14 @@
 
     <Preference
         app:fragment="com.example.pokemongolocations.SettingsActivity$StylingFragment"
-        app:icon="@drawable/messages"
         app:key="styling_header"
-        app:title="@string/styling_header" />
+        app:title="@string/styling_header"
+        app:icon="@drawable/ic_appearance_24dp"/>
 
     <Preference
         app:fragment="com.example.pokemongolocations.SettingsActivity$GoogleMapsFragment"
-        app:icon="@drawable/sync"
         app:key="google_maps_header"
-        app:title="@string/googleMaps_header" />
+        app:title="@string/googleMaps_header"
+        app:icon="@drawable/ic_location_settings_black_24dp"/>
 
 </PreferenceScreen>

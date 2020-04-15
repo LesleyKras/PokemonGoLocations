@@ -34,15 +34,14 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ListActivity extends AppCompatActivity implements OnMapReadyCallback, PokemonListInterface {
+public class ListActivity extends AppCompatActivity implements OnMapReadyCallback {
     private SharedPreferences sharedPreferences;
     private RecyclerView recycler;
     private JSONArray savedPokemons;
     private MapFragment mapFragment;
     private GoogleMap googleMap;
-
-    // Settings
     private Integer mapZoom;
+    private ArrayList<PokemonData> pokemonList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +51,8 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Retrieve saved pokemons from sharedPreferences
         SharedPreferences pref = getSharedPreferences("pokemons", MODE_PRIVATE);
         String json_array = pref.getString("pokemons", null);
+
+        // If succesfully retrieved string, create JSONArray
         if(json_array != null){
             try {
                 savedPokemons = new JSONArray(json_array);
@@ -59,6 +60,7 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
                 e.printStackTrace();
             }
         }else{
+            // Else create empty JSONArray
             savedPokemons = new JSONArray();
         }
 
@@ -70,24 +72,38 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //Loading settings configuration for styling settings
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Integer menuColor = sharedPreferences.getInt("menu_color", Color.parseColor("#ffffff"));
         Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
-        Integer buttonColor = sharedPreferences.getInt("button_color", Color.parseColor("#ffffff"));
         mapZoom = Integer.parseInt(sharedPreferences.getString("mapZoom", "17"));
 
-        //Google Maps
+        //Load Google Maps into variable
         mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
+
+        //Run onMapReady() if map is loaded
         mapFragment.getMapAsync(this);
 
-
+        //Put RecyclerView into variable
         recycler = (RecyclerView) findViewById(R.id.pokemonRecycler);
 
         //Apply background color settings to activity
         View root = recycler.getRootView();
         root.setBackgroundColor(backgroundColor);
 
-        ArrayList<PokemonData> pokemonList = new ArrayList<PokemonData>();
+        //Create array to place parsed pokemonData in;
+        pokemonList = new ArrayList<>();
+
+        //Parse the pokemonData retrieved from sharedPreferences
+        parsePokemonData();
+
+        //Set MyListAdapter with parsed pokemon data to the RecyclerView
+        MyListAdapter adapter = new MyListAdapter(this, pokemonList);
+        recycler.setHasFixedSize(true);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
+        recycler.setAdapter(adapter);
+    }
+
+    //Function to parse the pokemonData JSONArray into array<PokemonData>
+    public void parsePokemonData(){
         for (int i =0; i < savedPokemons.length(); i++){
             try {
                 JSONObject pokemon = savedPokemons.getJSONObject(i);
@@ -105,15 +121,10 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
         }
-        MyListAdapter adapter = new MyListAdapter(this, pokemonList);
-        recycler.setHasFixedSize(true);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        recycler.setAdapter(adapter);
-
-        Log.d("TAGGGG:", Integer.toString(savedPokemons.length()));
-
     }
 
+    //EventListener for menu items
+    //For this activity; back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -126,20 +137,21 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    //Callback function if map is loaded
+    //Go to start position (europe)
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng fakeLocation = new LatLng(0.000, 0.000);
-        CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(fakeLocation, 30);
+        LatLng fakeLocation = new LatLng(52.1950973, 5.3436271);
+        CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(fakeLocation, 6);
         googleMap.animateCamera(camPosition);
         this.googleMap = googleMap;
     }
 
-    @Override
     public void goToPokemonLocation(LatLng location, String name) {
         googleMap.addMarker(new MarkerOptions()
                 .position(location)
                 .title(name));
         CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(location, mapZoom);
-        googleMap.moveCamera(camPosition);
+        googleMap.animateCamera(camPosition);
     }
 }

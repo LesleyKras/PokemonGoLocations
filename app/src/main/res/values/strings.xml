@@ -3,7 +3,7 @@
     <string name="back_button">Back</string>
     <string name="submit_button">Submit</string>
     <string name="select_your_pokemon">Select Your Pokémon:</string>
-    <string name="select_your_location">Select Your Location:</string>
+    <string name="select_your_location">Your current location:</string>
     <string name="title_activity_settings">Settings</string>
     <string name="location_text_list_view">LOCATION</string>
 

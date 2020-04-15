@@ -319,11 +319,13 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (location != null) {
                             // Logic to handle location object
                             lastKnownLocation = location;
-                            CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), mapZoom);
-                            googleMap.animateCamera(camPosition);
-                            marker = googleMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
-                                    .title("Current Location"));
+                            CameraUpdate camPosition = CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+                            if (googleMap != null){
+                                googleMap.animateCamera(camPosition);
+                                marker = googleMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
+                                        .title("Current Location"));
+                            }
                         }
                     }
                 });
