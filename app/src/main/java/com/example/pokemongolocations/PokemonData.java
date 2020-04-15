@@ -1,5 +1,6 @@
 package com.example.pokemongolocations;
 
+// Custom class for the Adapter to fill the ListView with the PokemonData
 public class PokemonData {
     private Integer pokemonId;
     private String name;
@@ -7,6 +8,7 @@ public class PokemonData {
     private Double longitude;
     private Double latitude;
 
+    // Constructor for building the pokemon object
     public PokemonData(Integer id, String name, String imageUrl, Double longitude, Double latitude){
         this.pokemonId = id;
         this.name = name;
@@ -15,6 +17,7 @@ public class PokemonData {
         this.latitude = latitude;
     }
 
+    // Getters for private vars
     public Integer getPokemonId() {
         return pokemonId;
     }

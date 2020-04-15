@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Loading settings configuration through sharedPreferences
+        // Loading settings configuration through sharedPreferences
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
         Integer buttonColor = sharedPreferences.getInt("button_color", Color.parseColor("#ffffff"));
@@ -37,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
         foundPokemonButton.setBackgroundColor(buttonColor);
         listViewButton.setBackgroundColor(buttonColor);
 
-        //Apply background color settings to activity
+        // Apply background color settings to activity
         View root = foundPokemonButton.getRootView();
         root.setBackgroundColor(backgroundColor);
 
-        //Apply onClickListener to "I found a cool pokemon" button to open form
+        // Apply onClickListener to "I found a cool pokemon" button to open form
         foundPokemonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Apply onClickListener to "Show my pokemon" button to open ListView
+        // Apply onClickListener to "Show my pokemon" button to open ListView
         listViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

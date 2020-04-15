@@ -6,18 +6,12 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,7 +25,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ListActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -64,45 +57,45 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
             savedPokemons = new JSONArray();
         }
 
-        //Configure actionBar
+        // Configure actionBar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Saved Pokémons");
         actionBar.setDisplayShowTitleEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //Loading settings configuration for styling settings
+        // Loading settings configuration for styling settings
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Integer backgroundColor = sharedPreferences.getInt("background_color", Color.parseColor("#ffffff"));
         mapZoom = Integer.parseInt(sharedPreferences.getString("mapZoom", "17"));
 
-        //Load Google Maps into variable
+        // Load Google Maps into variable
         mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
 
-        //Run onMapReady() if map is loaded
+        // Run onMapReady() if map is loaded
         mapFragment.getMapAsync(this);
 
-        //Put RecyclerView into variable
+        // Put RecyclerView into variable
         recycler = (RecyclerView) findViewById(R.id.pokemonRecycler);
 
-        //Apply background color settings to activity
+        // Apply background color settings to activity
         View root = recycler.getRootView();
         root.setBackgroundColor(backgroundColor);
 
-        //Create array to place parsed pokemonData in;
+        // Create array to place parsed pokemonData in;
         pokemonList = new ArrayList<>();
 
-        //Parse the pokemonData retrieved from sharedPreferences
+        // Parse the pokemonData retrieved from sharedPreferences
         parsePokemonData();
 
-        //Set MyListAdapter with parsed pokemon data to the RecyclerView
-        MyListAdapter adapter = new MyListAdapter(this, pokemonList);
+        // Set MyListAdapter with parsed pokemon data to the RecyclerView
+        PokemonListAdapter adapter = new PokemonListAdapter(this, pokemonList);
         recycler.setHasFixedSize(true);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setAdapter(adapter);
     }
 
-    //Function to parse the pokemonData JSONArray into array<PokemonData>
+    // Function to parse the pokemonData JSONArray into array<PokemonData>
     public void parsePokemonData(){
         for (int i =0; i < savedPokemons.length(); i++){
             try {
@@ -123,8 +116,8 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //EventListener for menu items
-    //For this activity; back button
+    // EventListener for menu items
+    // For this activity; back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -137,8 +130,8 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    //Callback function if map is loaded
-    //Go to start position (europe)
+    // Callback function if map is loaded
+    // Go to start position (europe)
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng fakeLocation = new LatLng(52.1950973, 5.3436271);
@@ -147,6 +140,8 @@ public class ListActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.googleMap = googleMap;
     }
 
+    // Function to go to the location of saved pokemon and place a marker
+    // This function is being used in onBindViewHolder() of PokemonListAdapter in OnClickListener for list items
     public void goToPokemonLocation(LatLng location, String name) {
         googleMap.addMarker(new MarkerOptions()
                 .position(location)
