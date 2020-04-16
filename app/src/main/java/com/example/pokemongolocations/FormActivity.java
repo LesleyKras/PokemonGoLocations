@@ -179,9 +179,6 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Request lastknownLocation and load Google map
         getLastLocation();
-
-        // Start location updates
-        startLocationUpdates();
     }
 
     // EventListener for menu items
@@ -346,7 +343,7 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
                             lastKnownLocation = location;
                             // If google maps has loaded and is ready move camera to new location and place marker
                             if (googleMap != null){
-                                CameraUpdate camPosition = CameraUpdateFactory.newLatLng(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()));
+                                CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), mapZoom);
                                 googleMap.animateCamera(camPosition);
                                 marker = googleMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()))
@@ -384,6 +381,9 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.googleMap = googleMap;
         CameraUpdate camPosition = CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()), mapZoom);
         googleMap.animateCamera(camPosition);
+
+        // Start location updates
+        startLocationUpdates();
     }
 
     // If app life cycle is resumed, start requesting location updates
