@@ -75,6 +75,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<String> pokemons =new ArrayList<>();
     private GoogleMap googleMap;
 
+    private static final long GPS_INTERVAL = 10000;
+    private static final long GPS_FAST_INTERVAL = 5000;
     private static final String ERROR_MESSAGE_RETRIEVING_DATA = "Something went wrong retrieving the Pokemon data";
 
     @Override
@@ -362,8 +364,8 @@ public class FormActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Function to create a LocationRequest
     private LocationRequest createLocationRequest() {
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(GPS_INTERVAL);
+        locationRequest.setFastestInterval(GPS_FAST_INTERVAL);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         return locationRequest;
     }
